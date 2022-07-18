@@ -1,0 +1,17 @@
+.header-item-right{
+   margin-left: calc(100% - 446px);
+ }
+ .header-item-rightClose{
+   margin-left: calc(100% - 332px);
+  }
+  .dropdown-trigger {
+    display: inline-flex;
+    margin-left: 10px;
+    margin-right: 10px;
+ }
+ .img-circle{
+    width: 31px;
+    height: 31px;
+    margin-right: 8px;
+    border-radius: 50%;
+ }

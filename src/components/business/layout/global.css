@@ -1,8 +1,20 @@
 .ant-layout.ant-layout-has-sider {
+  background-color: white;
   height: 100vh;
-  width:100vw;
-}
-#components-layout-demo-custom-trigger .trigger {
+  }
+   /* sidebar */
+   .ant-layout-sider{
+    background-color: transparent;
+   }
+   .ant-menu-inline {
+    background-color: transparent;
+  }
+  .customWidth{
+    margin-left: 80px !important;
+  }
+  
+
+  .trigger {
     padding: 0 24px;
     font-size: 18px;
     line-height: 64px;
@@ -10,21 +22,48 @@
     transition: color 0.3s;
   }
   
-  #components-layout-demo-custom-trigger .trigger:hover {
+  .trigger:hover {
     color: #1890ff;
   }
   
-  #components-layout-demo-custom-trigger .logo {
-    height: 32px;
-    margin: 16px;
-    background: rgba(255, 255, 255, 0.3);
+  .logo {
+    z-index: 1;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 24px;
+    box-shadow: 0 1px 9px -3px rgb(0 0 0 / 20%);
   }
+  .logo  h1 {
+    vertical-align: text-bottom;
+    font-size: 16px;
+    text-transform: uppercase;
+    display: inline-block;
+    font-weight: 700;
+    color: #1890ff;
+    white-space: nowrap;
+    margin-bottom: 0;
+    background-image: -webkit-gradient(linear, 37.219838% 34.532506%, 36.425669% 93.178216%, from(#29cdff), to(#0a60ff), color-stop(0.37, #148eff));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
   
   .site-layout .site-layout-background {
     background: #fff;
   }
+  .ant-layout-footer {
+    background: white;
+}
+  .ant-btn-primary[disabled]{
+    display: none;
+  }
 
-
+  /* pagination table */
+  ul.ant-pagination.ant-table-pagination.ant-table-pagination-right {
+    margin-right: 3%;
+}
 
   @media (max-width: 767px) {
   
@@ -35,19 +74,4 @@
         margin-bottom: 8px;
       }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
+  

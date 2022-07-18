@@ -1,5 +1,5 @@
 import React, { useState, useEffect,useRef } from "react";
-import { Modal, Form, Input, } from 'antd';
+import { Modal, Form, Input, Breadcrumb } from 'antd';
 import { isWebUri } from 'valid-url';
 import { getDataByPathTest, updateDataByPath } from "../../../../service/data";
 import ChangeAvatar from "./changeAvatar"
@@ -173,18 +173,24 @@ export default function detailBusinesses() {
 
   return (
     <>
-      <div className="row">
+        <Breadcrumb style={{ margin: '16px 0' }}>
+        <Breadcrumb.Item>Home</Breadcrumb.Item>
+        <Breadcrumb.Item>
+          <a href="#">List apply</a>
+        </Breadcrumb.Item>
+      </Breadcrumb>
+      <div style={{ backgroundColor: 'white', height: "inherit" }} className="row">
         <div className="col-12 col-md-4">
-          <div className="profile-img">
+          <div className="profile-img mt-5">
             {isWebUri(data.image)? <img style={{ height: '284px', width: '264px' }} src={data.image} alt="" /> : <img style={{ height: '284px', width: '264px' }}  src="https://image.shutterstock.com/image-vector/man-icon-profile-member-user-260nw-1335068444.jpg" alt="" />}
           </div>
         </div>
         <div className="col-12 col-md-8">
           <div className="row">
-            <div className="col-10 mb-3 text-center align-self-center">
+            <div className="col-10 mb-3 mt-5 text-center align-self-center">
               <h1>Profile</h1>
             </div>
-            <div className="col-2 text-right mb-3">
+            <div className="col-2 text-right mb-3 mt-5">
               <button type="button" className="btn btn-secondary" onClick={() => { setVisible(true) }}>Edit</button>
             </div>
 

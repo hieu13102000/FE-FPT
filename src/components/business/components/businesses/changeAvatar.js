@@ -61,7 +61,7 @@ function ChangeAvatar(props,ref ) {
               getDownloadURL(uploadTask.snapshot.ref).then((url) => {
                 console.log("url firebase trả về", url);
                 sendData(url);
-              });
+              }).catch(err => {});
             }
           );
         }

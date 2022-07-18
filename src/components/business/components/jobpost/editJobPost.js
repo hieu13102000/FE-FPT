@@ -1,13 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { Button, Form, Input, Select,Breadcrumb} from 'antd';
-import ReactBSAlert from "react-bootstrap-sweetalert";
+import { Button, Form, Input, Select, message, } from 'antd';
+import 'antd/dist/antd.css';
 import {
-  createDataByPath,
+  updateDataByPath,
   getDataByPathTest,
+  deleteDataByPath,
 } from "../../../../service/data";
-export default function CreateJob() {
+
+export default function editJobPost(props) {
   const [selectDepartment, setSelectDepartment] = useState([]);
-  const [alert, setalert] = useState(false);
+
+  // console.log("Enter",props.payLoad);
+  function sendData() {
+    props.change(false);
+  }
+
   useEffect(() => {
     loadListDepartment();
   }, []);
@@ -22,93 +29,94 @@ export default function CreateJob() {
       }
     }
   }
-  //createJobPosts
-  async function createJobPosts(currentData) {
+  // convert the jobDepartments object to an array with departmentIds
+  let arrayDepartment=[];
+  props.payLoad.jobDepartments.map(value => {
+    arrayDepartment.push(value.departmentId)
+  })
+
+  //update JobPosts
+  async function updateJobPosts(currentData) {
     if (localStorage && localStorage.getItem("accessToken") && localStorage.getItem("userID")) {
       const accessToken = localStorage.getItem("accessToken");
       const userID = localStorage.getItem("userID");
       const data = currentData;
-      const path = `api/v1/job-post/${userID}`;
-      const res = await createDataByPath(path, accessToken, data);
+      data.businessID=userID
+      const path = `api/v1/job-post/${props.payLoad.jobPositionId}`;
+      const res = await updateDataByPath(path, accessToken, data);
       if (res && res.status === 200) {
-        successAlert('Job post created successfully');
+        jopPostSuccess()
       }
       else {
-        errorsAlert('Job post creation failed');
+        jopPostError()
       }
+      sendData()
     }
   }
 
-    /// altert messages
-    const successAlert = (message) => {
-      setalert(
-        <ReactBSAlert
-          success
-          style={{ display: "block", marginTop: "-100px" }}
-          title={message}
-          onConfirm={() => setalert(null)}
-          onCancel={() => setalert(null)}
-          showConfirm={false}
-          showCancel={false}
-          confirmBtnBsStyle="success"
-          confirmBtnText="Ok"
-          btnSize=""
-          timeout={1000}
-        ></ReactBSAlert>
-      );
-    };
-    const errorsAlert = (message) => {
-      setalert(
-        <ReactBSAlert
-          error
-          style={{ display: "block", marginTop: "-100px" }}
-          title={message}
-          onConfirm={() => setalert(null)}
-          onCancel={() => setalert(null)}
-          showConfirm={false}
-          showCancel={false}
-          confirmBtnBsStyle="error"
-          confirmBtnText="Ok"
-          btnSize=""
-          timeout={1000}
-        ></ReactBSAlert>
-      );
-    };
-    
+  async function deleteJobPosts(currentData) {
+    if (localStorage && localStorage.getItem("accessToken") && localStorage.getItem("userID")) {
+      const accessToken = localStorage.getItem("accessToken");
+      const userID = localStorage.getItem("userID");
+      const data = currentData;
+      console.log("120px",data);
+      const path = `api/v1/job-post/${data}`;
+      const res = await deleteDataByPath(path, accessToken, "");
+      if (res && res.status === 200) {
+        deleteSuccess()
+      }
+      else {
+        deleteError()
+      }
+      sendData()
+    }
+  }
+  
+  const deleteJob = () => {
+    deleteJobPosts(props.payLoad.jobPositionId)
+  }
+
+  //Message
+  function jopPostSuccess() {
+    message.success('Job post updated successfully');
+  };
+  function jopPostError() {
+    message.error('Job post updated failed');
+  };
+
+  function deleteSuccess() {
+    message.success('Job post deleted successfully');
+  };
+  function deleteError() {
+    message.error('Job post deleted failed');
+  };
 
   const { Option } = Select;
 
   const [form] = Form.useForm();
   const submitForm = (values) => {
+    values.jobPositionId = props.payLoad.jobPositionId
     console.log('Success:', values);
-    createJobPosts(values)
-    form.resetFields();
+    updateJobPosts(values)
   };
   return (
-    <>
-      <Breadcrumb style={{ margin: '16px 0' }}>
-    <Breadcrumb.Item>Home</Breadcrumb.Item>
-    <Breadcrumb.Item>
-      <a href="">Create job</a>
-    </Breadcrumb.Item>
-  </Breadcrumb>
-       {alert}
-       <div  style={{backgroundColor: 'white',height: "inherit"}}>
-       <Form
+    <div style={{ backgroundColor: 'white', height: "inherit" }}>
+      <Form
         form={form}
         onFinish={submitForm}
       >
-        <div className="row ml-5">
-          <div className="col-12 col-md-12 text-center m-4">
-            <h1>Create job</h1>
+        <div className="row">
+          <div className="col-12 col-md-12 text-center my-4">
+            <h1>Update Job</h1>
           </div>
-          <div className="col-12 col-md-6 row">
+          <div className="col-12 col-md-6 ml-4 row">
             <div className="col-4">
               <span>Job Name</span>
             </div>
             <div className="col-8">
               <Form.Item
                 name="jobName"
+                initialValue={props.payLoad.jobName}
                 rules={[{ required: true, message: 'Please input your jobName!' }]}
               >
                 <Input />
@@ -120,6 +128,7 @@ export default function CreateJob() {
             <div className="col-8">
               <Form.Item
                 name="detailWork"
+                initialValue={props.payLoad.detailWork}
                 rules={[{ required: true, message: 'Please input your detailWork!' }]}
               >
                 <Input />
@@ -131,6 +140,7 @@ export default function CreateJob() {
             <div className="col-8">
               <Form.Item
                 name="request"
+                initialValue={props.payLoad.request}
                 rules={[{ required: true, message: 'Please input your request!' }]}
               >
                 <Input />
@@ -142,6 +152,7 @@ export default function CreateJob() {
             <div className="col-8">
               <Form.Item
                 name="salary"
+                initialValue={props.payLoad.salary}
                 rules={[{ required: true, message: 'Please input your salary!' }]}
               >
                 <Input />
@@ -155,6 +166,7 @@ export default function CreateJob() {
             <div className="col-8">
               <Form.Item
                 name="workLocation"
+                initialValue={props.payLoad.workLocation}
                 rules={[{ required: true, message: 'Please input your workLocation!' }]}
               >
                 <Input />
@@ -166,6 +178,7 @@ export default function CreateJob() {
             <div className="col-8">
               <Form.Item
                 name="detailBusiness"
+                initialValue={props.payLoad.detailBusiness}
                 rules={[{ required: true, message: 'Please input your detailBusiness!' }]}
               >
                 <Input />
@@ -177,6 +190,7 @@ export default function CreateJob() {
             <div className="col-8">
               <Form.Item
                 name="benefit"
+                initialValue={props.payLoad.benefit}
                 rules={[{ required: true, message: 'Please input your benefit!' }]}
               >
                 <Input />
@@ -188,6 +202,7 @@ export default function CreateJob() {
             <div className="col-8">
               <Form.Item
                 name="amount"
+                initialValue={props.payLoad.amount}
                 rules={[{ required: true, message: 'Please input your amount!' }]}
               >
                 <Input />
@@ -201,20 +216,22 @@ export default function CreateJob() {
                 name="listDepartment"
                 rules={[{ required: true, message: 'Please select your list department!', type: 'array' }]}
               >
-                  <Select mode="multiple"  allowClear placeholder="Please select list department">
+                <Select mode="multiple" allowClear
+                 defaultValue={arrayDepartment}
+                 placeholder="Please select list department">
                   {selectDepartment.map(a =>
-                        <Option key={a.departmentId} value={a.departmentId}>{a.departmentName}</Option>
-                    )}
-                  </Select>
+                    <Option key={a.departmentId} value={a.departmentId}>{a.departmentName}</Option>
+                  )}
+                </Select>
               </Form.Item>
             </div>
           </div>
-          <div className="col-12 col-md-12 text-right">
-            <Button style={{ width: '200px', height: "50px",marginRight: '50px' }} type="primary" htmlType="submit">Create</Button>
+          <div className="col-12 col-md-12 text-right mt-4 mr-5">
+            <Button type="primary" htmlType="submit">Update</Button>
+            <Button type="primary" danger className="mx-3" onClick={deleteJob} >Delete</Button>
           </div>
         </div>
       </Form>
-       </div>
-    </>
+    </div>
   )
 }

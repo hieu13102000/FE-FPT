@@ -114,7 +114,7 @@ const Login = () => {
       const path = `api/v1/login`;
       const data = { tokenfb: accessToken };
       const response = await loginDataByPath(path, data);
-      console.log(response);
+      // console.log(response);
       if (response && response.status === 200) {
         if (localStorage) {
           localStorage.setItem("accessToken", response.data);

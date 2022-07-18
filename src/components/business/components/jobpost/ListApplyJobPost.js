@@ -1,42 +1,81 @@
 import React, { useState, useEffect } from "react";
-import { Table, Tag, Button, Modal,message } from 'antd';
+import { Table, Tag, Button, Modal, Breadcrumb } from 'antd';
+import ReactBSAlert from "react-bootstrap-sweetalert";
 import moment from "moment";
-import { getDataByPathTest , updateDataByPath } from "../../../../service/data";
+import { getDataByPathTest, updateDataByPath } from "../../../../service/data";
 
 export default function ListApplyJobPost() {
   const [dataTabe, setDataTable] = useState([]);
+  const [reloadDataTabe, setReloadDataTable] = useState(0);
+  const [alert, setalert] = useState(false);
   const [currentDataID, setCurrentDataID] = useState({});
   const [currentStatus, setCurrentStatus] = useState({});
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-
-    //load List Department
-    async function listApplyJobPost() {
-      if (localStorage && localStorage.getItem("accessToken") && localStorage.getItem("userID")) {
-        const accessToken = localStorage.getItem("accessToken");
-        const userID = localStorage.getItem("userID");
-        const path = `api/v1/applys/business/${userID}`;
-        const res = await getDataByPathTest(path, accessToken, "");
-        if (res !== null && res !== undefined && res.status === 200) {
-          setDataTable(res.data)
-        }
+  //load List Department
+  async function listApplyJobPost() {
+    if (localStorage && localStorage.getItem("accessToken") && localStorage.getItem("userID")) {
+      const accessToken = localStorage.getItem("accessToken");
+      const userID = localStorage.getItem("userID");
+      const path = `api/v1/applys/business/${userID}`;
+      const res = await getDataByPathTest(path, accessToken, "");
+      if (res !== null && res !== undefined && res.status === 200) {
+        setDataTable(res.data)
       }
     }
+  }
   // edit status Apply
-    async function updateStatusApply(applyId, currentStatus) {
-      if (localStorage && localStorage.getItem("accessToken")) {
-        const accessToken = localStorage.getItem("accessToken");
-        const path = `api/v1/applys/${applyId}/status`;
-        const res = await updateDataByPath(path, accessToken, currentStatus);
-        if (res !== null && res !== undefined && res.status === 200) {
-          message.success('Update status success');
-        }
-        else {
-          message.error('Update status error');
-        }
+  async function updateStatusApply(applyId, currentStatus) {
+    if (localStorage && localStorage.getItem("accessToken")) {
+      const accessToken = localStorage.getItem("accessToken");
+      const path = `api/v1/applys/${applyId}/status`;
+      const res = await updateDataByPath(path, accessToken, currentStatus);
+      if (res !== null && res !== undefined && res.status === 200) {
+        successAlert('Update status success');
+        setReloadDataTable(reloadDataTabe + 1)
+      }
+      else {
+        errorsAlert('Update status error');
       }
     }
-    
+  }
+  /// altert messages
+  const successAlert = (message) => {
+    setalert(
+      <ReactBSAlert
+        success
+        style={{ display: "block", marginTop: "-100px" }}
+        title={message}
+        onConfirm={() => setalert(null)}
+        onCancel={() => setalert(null)}
+        showConfirm={false}
+        showCancel={false}
+        confirmBtnBsStyle="success"
+        confirmBtnText="Ok"
+        btnSize=""
+        timeout={1000}
+      ></ReactBSAlert>
+    );
+  };
+  const errorsAlert = (message) => {
+    setalert(
+      <ReactBSAlert
+        error
+        style={{ display: "block", marginTop: "-100px" }}
+        title={message}
+        onConfirm={() => setalert(null)}
+        onCancel={() => setalert(null)}
+        showConfirm={false}
+        showCancel={false}
+        confirmBtnBsStyle="error"
+        confirmBtnText="Ok"
+        btnSize=""
+        timeout={1000}
+      ></ReactBSAlert>
+    );
+  };
+
+
   const showModal = () => {
     setIsModalVisible(true);
   };
@@ -44,33 +83,33 @@ export default function ListApplyJobPost() {
   const handleOk = () => {
     setIsModalVisible(false);
   };
- 
-  const handleUpdateStatus= (data,query) => {
-    if(query==="approve"){
+
+  const handleUpdateStatus = (data, query) => {
+    if (query === "approve") {
       const temporaryVariable = {
         id: data.applyId,
-        status:2
+        status: 2
       }
-      updateStatusApply(data.applyId,temporaryVariable)
+      updateStatusApply(data.applyId, temporaryVariable)
     }
-    else if(query==="reject"){
+    else if (query === "reject") {
       const temporaryVariable = {
         id: data.applyId,
-        status:3
+        status: 3
       }
-      updateStatusApply(data.applyId,temporaryVariable)
+      updateStatusApply(data.applyId, temporaryVariable)
     }
     setIsModalVisible(false);
   }
   const handleGetID = (data) => {
     setCurrentDataID(data)
     setCurrentStatus(data)
-    console.log("showModal",data);
+    console.log("showModal", data);
     showModal();
   }
   useEffect(() => {
     listApplyJobPost();
-  }, []);
+  }, [reloadDataTabe]);
 
   const columns = [
     {
@@ -206,8 +245,8 @@ export default function ListApplyJobPost() {
                 <div className="col-12 text-right">
                   {currentDataID.statusApply === 1 && (
                     <>
-                    <Button className="btn-success mr-2" onClick={() => handleUpdateStatus(currentStatus,"approve")} size={5}>Approve</Button>
-                      <Button className="btn-dark mr-2" onClick={() => handleUpdateStatus(currentStatus,"reject")} size={5}>Reject</Button>
+                      <Button className="btn-success mr-2" onClick={() => handleUpdateStatus(currentStatus, "approve")} size={5}>Approve</Button>
+                      <Button className="btn-dark mr-2" onClick={() => handleUpdateStatus(currentStatus, "reject")} size={5}>Reject</Button>
                     </>
                   )}
                   <Button type="danger" onClick={handleOk} size={5}>Close</Button>
@@ -222,7 +261,14 @@ export default function ListApplyJobPost() {
 
   return (
     <>
-      <Table columns={columns} dataSource={dataTabe} />
+      <Breadcrumb style={{ margin: '16px 0' }}>
+        <Breadcrumb.Item>Home</Breadcrumb.Item>
+        <Breadcrumb.Item>
+          <a href="">List apply</a>
+        </Breadcrumb.Item>
+      </Breadcrumb>
+      {alert}
+      <div style={{ backgroundColor: 'white', height: "inherit" }}><Table columns={columns} dataSource={dataTabe} /></div>
     </>
   )
 }

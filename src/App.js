@@ -17,6 +17,7 @@ import BusinessLayout from "./components/business/layout";
 import ListApplyJobPost from "./components/business/components/jobpost/ListApplyJobPost";
 import DetailBusinesses from "./components/business/components/businesses/detailBusinesses";
 import CreateJob from "./components/business/components/jobpost/CreateJob";
+import DetailJob from "./components/business/components/jobpost/detailJobPost"
 import CreateSemester from "./components/admin/semester/CreateSemester";
 
 
@@ -77,10 +78,9 @@ function App() {
               <BusinessLayout>
                 <Switch>
                   <Route path="/createJob" exact component={CreateJob} />
+                  <Route path="/detailJob" exact component={DetailJob} />
                   <Route path="/listApply" exact component={ListApplyJobPost} />
-                  <Route
-                    path="/detailBusinesses"
-                    component={DetailBusinesses}
+                  <Route path="/detailBusinesses" component={DetailBusinesses}
                   />
                 </Switch>
               </BusinessLayout>
